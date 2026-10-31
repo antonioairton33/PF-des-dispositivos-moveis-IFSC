@@ -1,3 +1,4 @@
+
 package com.ifsc.app;
 
 import android.content.Context;
@@ -10,12 +11,20 @@ import android.view.View;
 public class NivelCircularView extends View {
 
     private Paint pincel;
+    private float inclinacaoX;
+    private float inclinacaoY;
 
     public NivelCircularView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         pincel = new Paint();
         pincel.setAntiAlias(true);
+    }
+
+    public void setInclinacao(float x, float y) {
+        inclinacaoX = x;
+        inclinacaoY = y;
+        invalidate();
     }
 
     @Override
@@ -26,6 +35,9 @@ public class NivelCircularView extends View {
         float centroY = getHeight() / 2f;
 
         float raio = Math.min(getWidth(), getHeight()) * 0.42f;
+
+        float deslocamentoX = inclinacaoX * raio * 0.55f;
+        float deslocamentoY = inclinacaoY * raio * 0.55f;
 
         pincel.setColor(Color.rgb(65, 85, 45));
         pincel.setStyle(Paint.Style.FILL);
@@ -49,6 +61,11 @@ public class NivelCircularView extends View {
         pincel.setStyle(Paint.Style.FILL);
         pincel.setColor(Color.WHITE);
 
-        canvas.drawCircle(centroX, centroY, 20, pincel);
+        canvas.drawCircle(
+                centroX + deslocamentoX,
+                centroY + deslocamentoY,
+                20,
+                pincel
+        );
     }
 }

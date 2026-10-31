@@ -12,12 +12,18 @@ import android.view.View;
 public class NivelHorizontalView extends View {
 
     private Paint pincel;
+    private float inclinacao;
 
     public NivelHorizontalView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         pincel = new Paint();
         pincel.setAntiAlias(true);
+    }
+
+    public void setInclinacao(float valor) {
+        inclinacao = valor;
+        invalidate();
     }
 
     @Override
@@ -27,35 +33,34 @@ public class NivelHorizontalView extends View {
         float centroX = getWidth() / 2f;
         float centroY = getHeight() / 2f;
 
-        // coopo verdinho
+        float deslocamento = inclinacao * (getWidth() / 2f - 30);
+
         pincel.setColor(Color.rgb(190, 210, 100));
         pincel.setStyle(Paint.Style.FILL);
 
         canvas.drawRoundRect(
-                new RectF(10, centroY - 60, getWidth() - 10, centroY + 60),
+                new RectF(10, centroY - 30, getWidth() - 10, centroY + 30),
                 5, 5, pincel
         );
 
-        // contorno
         pincel.setColor(Color.rgb(65, 75, 65));
         pincel.setStyle(Paint.Style.STROKE);
         pincel.setStrokeWidth(6);
 
         canvas.drawRoundRect(
-                new RectF(5, centroY - 60, getWidth() - 5, centroY + 60),
+                new RectF(10, centroY - 30, getWidth() - 10, centroY + 30),
                 5, 5, pincel
         );
 
-        canvas.drawLine(centroX - 40 , centroY - 50,
-                centroX - 40, centroY + 50, pincel);
+        canvas.drawLine(centroX - 40, centroY - 25,
+                centroX - 40, centroY + 25, pincel);
 
-        canvas.drawLine(centroX + 40, centroY - 50,
-                centroX + 40, centroY + 50, pincel);
+        canvas.drawLine(centroX + 40, centroY - 25,
+                centroX + 40, centroY + 25, pincel);
 
-        // bolinha do centro
         pincel.setStyle(Paint.Style.FILL);
-        pincel.setColor(Color.rgb(255, 255, 255));
+        pincel.setColor(Color.WHITE);
 
-        canvas.drawCircle(centroX, centroY, 20, pincel);
+        canvas.drawCircle(centroX + deslocamento, centroY, 20, pincel);
     }
 }

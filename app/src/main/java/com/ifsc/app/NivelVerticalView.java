@@ -12,12 +12,18 @@ import android.view.View;
 public class NivelVerticalView extends View {
 
     private Paint pincel;
+    private float inclinacao;
 
     public NivelVerticalView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         pincel = new Paint();
         pincel.setAntiAlias(true);
+    }
+
+    public void setInclinacao(float valor) {
+        inclinacao = valor;
+        invalidate();
     }
 
     @Override
@@ -27,11 +33,13 @@ public class NivelVerticalView extends View {
         float centroX = getWidth() / 2f;
         float centroY = getHeight() / 2f;
 
+        float deslocamento = inclinacao * (getHeight() / 2f - 30);
+
         pincel.setColor(Color.rgb(190, 210, 100));
         pincel.setStyle(Paint.Style.FILL);
 
         canvas.drawRoundRect(
-                new RectF(centroX - 60, 5, centroX + 60, getHeight() - 5),
+                new RectF(centroX - 30, 5, centroX + 30, getHeight() - 5),
                 5, 5, pincel
         );
 
@@ -40,19 +48,19 @@ public class NivelVerticalView extends View {
         pincel.setStrokeWidth(6);
 
         canvas.drawRoundRect(
-                new RectF(centroX - 60, 5, centroX + 60, getHeight() - 5),
+                new RectF(centroX - 30, 5, centroX + 30, getHeight() - 5),
                 5, 5, pincel
         );
 
-        canvas.drawLine(centroX - 50, centroY - 40,
-                centroX + 50, centroY - 40, pincel);
+        canvas.drawLine(centroX - 25, centroY - 40,
+                centroX + 25, centroY - 40, pincel);
 
-        canvas.drawLine(centroX - 50, centroY + 40,
-                centroX + 50, centroY + 40, pincel);
+        canvas.drawLine(centroX - 25, centroY + 40,
+                centroX + 25, centroY + 40, pincel);
 
         pincel.setStyle(Paint.Style.FILL);
-        pincel.setColor(Color.rgb(255, 255, 255));
+        pincel.setColor(Color.WHITE);
 
-        canvas.drawCircle(centroX, centroY, 20, pincel);
+        canvas.drawCircle(centroX, centroY + deslocamento, 20, pincel);
     }
 }
