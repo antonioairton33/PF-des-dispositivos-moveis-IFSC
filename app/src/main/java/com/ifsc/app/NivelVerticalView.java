@@ -14,6 +14,12 @@ public class NivelVerticalView extends View {
     private Paint pincel;
     private float inclinacao;
 
+    private boolean nivelado;
+
+    public void setNivelado(boolean valor) {
+        nivelado = valor;
+    }
+
     public NivelVerticalView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -59,7 +65,7 @@ public class NivelVerticalView extends View {
                 centroX + 25, centroY + 40, pincel);
 
         pincel.setStyle(Paint.Style.FILL);
-        pincel.setColor(Color.WHITE);
+        pincel.setColor(nivelado ? Color.rgb(0, 200, 80) : Color.WHITE);
 
         canvas.drawCircle(centroX, centroY + deslocamento, 20, pincel);
     }
