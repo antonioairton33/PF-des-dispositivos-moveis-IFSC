@@ -99,8 +99,8 @@
         android:id="@+id/btn_calibrar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="16dp"
         android:text="Calibrar"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,11 +111,23 @@
         android:id="@+id/btn_salvar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="16dp"
-        android:text="Salvar medição"
+        android:text="Salvar"
         app:layout_constraintStart_toEndOf="@id/btn_calibrar"
+        app:layout_constraintEnd_toStartOf="@id/btn_historico"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/btn_historico"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="16dp"
+        android:text="Histórico"
+        app:layout_constraintStart_toEndOf="@id/btn_salvar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
