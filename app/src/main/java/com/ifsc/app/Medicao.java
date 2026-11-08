@@ -17,6 +17,8 @@ public class Medicao {
 
     public Double latitude;
     public Double longitude;
-    public Float precisaoGps;        // metros
+    public Float precisaoGps; // metros
 
+    public String observacao; // ("Sala 2", "Laje térreo")
 }
+

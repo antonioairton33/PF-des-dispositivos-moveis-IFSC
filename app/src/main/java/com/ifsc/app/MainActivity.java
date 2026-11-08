@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private boolean nivelado;
 
     // ---------- GPS ----------
+    private static final long IDADE_MAX_LOCALIZACAO_MS = 30000;  // posição mais velha que isso não é salva
     private LocationManager locationManager;
     private Location ultimaLocalizacao;
 
@@ -56,7 +60,6 @@ public class MainActivity extends AppCompatActivity
                     iniciarGps();
                 }
             });
-
     // ---------- Views ----------
     private NivelHorizontalView nivelHorizontal;
     private NivelVerticalView nivelVertical;
@@ -217,30 +220,53 @@ public class MainActivity extends AppCompatActivity
     private void iniciarGps() {
         if (!temPermissaoGps()) return;
 
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        boolean gpsLigado = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean redeLigada = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if (!gpsLigado && !redeLigada) {
             tvGps.setText("GPS desligado: ative a localização do aparelho");
             return;
         }
 
-        locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 2000, 1f, this);
-
-        Location ultima = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        if (ultima != null) {
-            onLocationChanged(ultima);
-        } else {
-            tvGps.setText("GPS: buscando sinal...");
+        // Distância mínima 0: atualiza a cada 1 s mesmo com o celular parado
+        if (gpsLigado) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 1000, 0f, this);
         }
+
+        // A rede (Wi-Fi/antenas) ajuda em locais fechados, onde o satélite não chega
+        if (redeLigada) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 1000, 0f, this);
+        }
+
+        tvGps.setText("GPS: buscando sinal...");
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+
+        // Com dois provedores ativos, ignora a posição da rede se o GPS está mais preciso e recente
+        if (ultimaLocalizacao != null
+                && !location.getProvider().equals(ultimaLocalizacao.getProvider())
+                && location.getAccuracy() > ultimaLocalizacao.getAccuracy()) {
+
+            long diferencaMs = (location.getElapsedRealtimeNanos()
+                    - ultimaLocalizacao.getElapsedRealtimeNanos()) / 1_000_000;
+
+            if (diferencaMs < 10000) {
+                return;
+            }
+        }
+
         ultimaLocalizacao = location;
 
+        String hora = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
         tvGps.setText(String.format(Locale.getDefault(),
-                "GPS: %.6f, %.6f (±%.0f m)",
-                location.getLatitude(), location.getLongitude(), location.getAccuracy()));
+                "GPS (%s): %.6f, %.6f (±%.0f m)\natualizado às %s",
+                location.getProvider(), location.getLatitude(), location.getLongitude(),
+                location.getAccuracy(), hora));
     }
 
     @Override
@@ -255,6 +281,16 @@ public class MainActivity extends AppCompatActivity
     public void onProviderDisabled(@NonNull String provider) {
     }
 
+    // Só considera a localização se ela for recente
+    private boolean localizacaoRecente() {
+        if (ultimaLocalizacao == null) return false;
+
+        long idadeMs = (SystemClock.elapsedRealtimeNanos()
+                - ultimaLocalizacao.getElapsedRealtimeNanos()) / 1_000_000;
+
+        return idadeMs <= IDADE_MAX_LOCALIZACAO_MS;
+    }
+
     // ---------- SALVAR MEDIÇÃO ----------
     private void salvarMedicao() {
 
@@ -266,7 +302,9 @@ public class MainActivity extends AppCompatActivity
         medicao.nivelado = nivelado;
         medicao.dataHora = System.currentTimeMillis();
 
-        if (ultimaLocalizacao != null) {
+        boolean temLocalizacao = localizacaoRecente();
+
+        if (temLocalizacao) {
             medicao.latitude = ultimaLocalizacao.getLatitude();
             medicao.longitude = ultimaLocalizacao.getLongitude();
             medicao.precisaoGps = ultimaLocalizacao.getAccuracy();
@@ -274,10 +312,12 @@ public class MainActivity extends AppCompatActivity
 
         boolean salvou = banco.salvar(medicao);
 
-        if (salvou) {
+        if (!salvou) {
+            Toast.makeText(this, "Erro ao salvar medição!", Toast.LENGTH_SHORT).show();
+        } else if (temLocalizacao) {
             Toast.makeText(this, "Medição salva!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Erro ao salvar medição!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Medição salva (sem localização GPS)", Toast.LENGTH_SHORT).show();
         }
     }
 }
