@@ -1,0 +1,36 @@
+name: Gerar APK Android
+
+on:
+  push:
+    branches: [ "primeiroApp" ]
+  pull_request:
+    branches: [ "primeiroApp" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Compilar aplicativo
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nivelamento-Digital-APK
+          path: app/build/outputs/apk/debug/*.apk
