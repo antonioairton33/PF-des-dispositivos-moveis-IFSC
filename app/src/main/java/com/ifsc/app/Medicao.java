@@ -1,9 +1,8 @@
 package com.ifsc.app;
 
 /**
- * Uma medição de nivelamento.
- * Campos públicos para ficar simples; o colega do banco pode anotar
- * com @Entity (Room) ou converter para ContentValues (SQLite).
+ * medição de nivelamento.
+ * Campos públicos para ficar simples
  *
  * latitude, longitude e precisaoGps são null quando o GPS ainda não tinha sinal.
  */
@@ -20,5 +19,4 @@ public class Medicao {
     public Double longitude;
     public Float precisaoGps;        // metros
 
-    public String observacao;        // opcional (ex.: "Sala 2", "Laje térreo")
 }

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity
 
     // ---------- Ajustes do nível ----------
     private static final float ALPHA = 0.85f;
-    private static final float ESCALA_GRAUS = 10f;
+    private static final float ESCALA_GRAUS = 30f;
     private static final float TOLERANCIA_GRAUS = 0.5f;
 
     // ---------- Sensor ----------
