@@ -67,14 +67,14 @@ public class MainActivity extends AppCompatActivity
     private TextView tvStatus, tvAngulos, tvGps;
 
     // ---------- Banco de dados ----------
-    private MedicaoDbHelper banco;
+    private MedicaoBD banco;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        banco = new MedicaoDbHelper(this);
+        banco = new MedicaoBD(this);
 
         nivelHorizontal = findViewById(R.id.nivel_horizontal);
         nivelVertical = findViewById(R.id.nivel_vertical);

@@ -10,9 +10,9 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicaoDbHelper extends SQLiteOpenHelper {
+public class MedicaoBD extends SQLiteOpenHelper {
 
-    public MedicaoDbHelper(Context context) {
+    public MedicaoBD(Context context) {
         super(context, "nivelamento.db", null, 1);
     }
 
@@ -97,5 +97,9 @@ public class MedicaoDbHelper extends SQLiteOpenHelper {
         cursor.close();
 
         return lista;
+    }
+    public void limparHistorico() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("medicao", null, null);
     }
 }

@@ -12,10 +12,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import android.widget.Button;
 
 public class HistoricoActivity extends AppCompatActivity {
 
-    private MedicaoDbHelper banco;
+    private MedicaoBD banco;
     private List<Medicao> medicoes;
 
     @Override
@@ -23,7 +24,21 @@ public class HistoricoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historico);
 
-        banco = new MedicaoDbHelper(this);
+        banco = new MedicaoBD(this);
+
+        Button btnLimpar = findViewById(R.id.btn_limpar);
+
+        btnLimpar.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Limpar histórico")
+                    .setMessage("Deseja realmente apagar todas as medições?")
+                    .setPositiveButton("Sim", (dialog, which) -> {
+                        banco.limparHistorico();
+                        recreate();
+                    })
+                    .setNegativeButton("Não", null)
+                    .show();
+        });
 
         ListView lista = findViewById(R.id.lista_medicoes);
 
